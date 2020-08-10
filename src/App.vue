@@ -1,42 +1,83 @@
 <template>
   <div id="app">
-    <el-container>
-      <el-header>0</el-header>
-      <el-header>1</el-header>
-      <el-aside>2</el-aside>
-      <el-main>3</el-main>
-      <el-footer>4</el-footer>
-    </el-container>
+
+    <!--用户状态栏-->
+    <div class="user-header">
+      <notify-menu :user="user"></notify-menu>
+    </div>
+
+    <!--导航菜单栏-->
+    <div class="menu-header">
+      <top-menu :menus="topMenu" :active.sync="activeTopMenu"></top-menu>
+    </div>
+
+    <!--正文区域-->
+    <div class="menu-context">
+      <context-menu :menus="treeMenu"></context-menu>
+    </div>
   </div>
 </template>
 
 <script>
+import {UserInfo, Menus} from "./test/data"
 
-import ElContainer from "element-ui/packages/container/src/main";
-import ElFooter from "element-ui/packages/footer/src/main";
-import ElHeader from "element-ui/packages/header/src/main"
-import ElAside from "element-ui/packages/aside/src/main"
-import ElMain from "element-ui/packages/main/src/main"
+import NotifyMenu from "./menu/NotifyMenu";
+import TopMenu from "./menu/TopMenu";
+import ContextMenu from "./menu/ContextMenu";
 
 export default {
   name: 'App',
   components: {
-      ElFooter,
-      ElContainer,
-      ElHeader,
-      ElAside,
-      ElMain
+    ContextMenu,
+    TopMenu,
+    NotifyMenu
+  },
 
-  }
+  data() {
+    return {
+      user: UserInfo,
+      topMenu: Menus,
+      activeTopMenu: Menus[0].id,
+      treeMenu: Menus[0].menus
+    }
+  },
+
+  watch: {
+    activeTopMenu(newVal) {
+      this.topMenu.forEach((top)=> {
+        if (top.id == newVal) {
+          this.treeMenu = top.menus;
+          return
+        }
+      })
+    }
+  },
+
 }
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+  #app {
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+    width: 100%;
+    height: auto;
+  }
+
+  .user-header {
+    width: 100%;
+    height: 32px;
+  }
+
+  .menu-header {
+    height: 56px;
+    width: 100%;
+  }
+
+  .menu-context {
+    width: 100%;
+    height: 680px;
+  }
+
 </style>
